@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>home.diti.me</title>
+<meta name="viewport" content="initial-scale=1.0">
+<style>
+  pre {
+    margin: 1em;
+    white-space: pre-wrap;
+    width: 100ex;
+  }
+  table {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  td, th {
+    border: 1px solid #999;
+    padding: 0.5rem;
+  }
+</style>
+
+<table>
+  <caption><tt>{{ .Host.Hostname }}</tt></caption>
+  <tr>
+    <td>Processor</td>
+    <td>
+      {{- range $cpu := .Cpu -}}
+        {{ $cpu.ModelName }}
+      {{- end -}}
+    </td>
+  </tr>
+  <tr>
+    <td>RAM</td>
+    <td>{{ .Mem.Used | prettyBytes }} / {{ .Mem.Total | prettyBytes }} ({{ .Mem.UsedPercent | printf "%.2f %%" }})</td>
+  </tr>
+  <tr>
+    <td>Disk</td>
+    <td>{{ .Disk.Used | prettyBytes }} / {{ .Disk.Total | prettyBytes }} ({{ .Disk.UsedPercent | printf "%.2f %%" }})</td>
+  </tr>
+</table>
