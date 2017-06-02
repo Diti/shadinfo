@@ -18,13 +18,9 @@
     <td>Processor</td>
     <td>
       {{- $cpu := index .Cpu 0 -}}
-      {{ $cpu.ModelName }}
-      {{ if eq $cpu.Cores 1 -}}
-        <progress max="100" value="{{ .Cpu.Percent }}">{{ .Cpu.Percent | printf "%.2f %%" }}</progress>
-      {{- else -}}
-        {{- range $curCpu := .Cpu -}}
-          <progress max="100" value="{{ .Percent }}">{{ .Percent | printf "%.2f %%" }}</progress>
-        {{- end -}}
+      {{ $cpu.ModelName }} / {{ $cpu.Cores }} cores
+      {{- range $curCpu := .Cpu -}}
+        <progress max="100" value="{{ .Percent }}">{{ .Percent | printf "%.2f %%" }}</progress>
       {{- end -}}
     </td>
   </tr>

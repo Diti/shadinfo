@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	bind     string
 	tmplPath string
 )
 
@@ -34,7 +35,7 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func logPanic(err error) {
-	log.Panic(err.Error)
+	log.Panic(err)
 }
 
 func handlePanic(w http.ResponseWriter, _ *http.Request, err interface{}) {
@@ -46,6 +47,7 @@ func handlePanic(w http.ResponseWriter, _ *http.Request, err interface{}) {
 }
 
 func init() {
+	flag.StringVar(&bind, "bind", ":8080", "Bind address.")
 	flag.StringVar(&tmplPath, "template", "./index.html.tmpl", "Path to the Go Template file to use.")
 }
 
@@ -65,8 +67,9 @@ func main() {
 	router.PanicHandler = handlePanic
 	router.GET("/", index)
 
+	log.Printf("Listening on %s…", bind)
 	srv := &http.Server{
-		Addr:    ":8081",
+		Addr:    bind,
 		Handler: router,
 	}
 	log.Fatal(srv.ListenAndServe())
