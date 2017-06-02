@@ -14,28 +14,40 @@
 
 <table>
   <caption><samp>{{ .Host.Hostname }}</samp></caption>
-  <tr>
-    <td>Processor</td>
-    <td>
-      {{- $cpu := index .Cpu 0 -}}
-      {{ $cpu.ModelName }} / {{ $cpu.Cores }} cores
-      {{- range $curCpu := .Cpu -}}
-        <progress max="100" value="{{ .Percent }}">{{ .Percent | printf "%.2f %%" }}</progress>
-      {{- end -}}
-    </td>
-  </tr>
-  <tr>
-    <td>RAM</td>
-    <td>
-      {{ .Mem.Used | prettyMem }} / {{ .Mem.Total | prettyMem }} ({{ .Mem.UsedPercent | printf "%.2f %%" }})
-      <progress max="{{ .Mem.Total }}" value="{{ .Mem.Used }}"></progress>
-    </td>
-  </tr>
-  <tr>
-    <td>Disk</td>
-    <td>
-      {{ .Disk.Used | prettyDisk }} / {{ .Disk.Total | prettyDisk }} ({{ .Disk.UsedPercent | printf "%.2f %%" }})
-      <progress max="{{ .Disk.Total }}" value="{{ .Disk.Used }}"></progress>
-    </td>
-  </tr>
+  {{ with .Cpu }}
+    <tr>
+      <td>Processor</td>
+      <td>
+        {{ (index . 0).ModelName }}
+        {{ range . }}
+          {{- $percent := .Percent -}}
+          <progress max="100" value="{{ $percent }}">{{ $percent | printf "%.2f %%" }}</progress>
+        {{ end }}
+      </td>
+    </tr>
+  {{- end }}
+  {{ with .Mem }}
+    {{- $memUsed := .Used -}}
+    {{- $memTotal := .Total -}}
+    {{- $percent := .UsedPercent }}
+    <tr>
+      <td>RAM</td>
+      <td>
+        {{ $memUsed | prettyMem }} / {{ $memTotal | prettyMem }} ({{ $percent | printf "%.2f %%" }})
+        <progress max="{{ $memTotal }}" value="{{ $memUsed }}"></progress>
+      </td>
+    </tr>
+  {{- end }}
+  {{ with .Disk }}
+    {{- $diskUsed := .Used -}}
+    {{- $diskTotal := .Total -}}
+    {{- $percent := .UsedPercent }}
+    <tr>
+      <td>Disk</td>
+      <td>
+        {{ $diskUsed | prettyDisk }} / {{ $diskTotal | prettyDisk }} ({{ $percent | printf "%.2f %%" }})
+        <progress max="{{ $diskTotal }}" value="{{ $diskUsed }}"></progress>
+      </td>
+    </tr>
+  {{- end }}
 </table>
