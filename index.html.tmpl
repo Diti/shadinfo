@@ -3,37 +3,43 @@
 <title>home.diti.me</title>
 <meta name="viewport" content="initial-scale=1.0">
 <style>
-  pre {
-    margin: 1em;
-    white-space: pre-wrap;
-    width: 100ex;
-  }
-  table {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-  td, th {
-    border: 1px solid #999;
-    padding: 0.5rem;
-  }
+  body { font-size: 1rem; }
+  html { font-size: 100%; }
+  pre { margin: 1em; white-space: pre-wrap; }
+  table { width: 66ex; border: 1px solid black; border-collapse: collapse; }
+    table caption { font-size: 1.5rem; margin-bottom: 1rem; }
+    table progress { width: 100%; }
+    table td, table th { border: 1px solid #999; padding: 0.5rem; }
 </style>
 
 <table>
-  <caption><tt>{{ .Host.Hostname }}</tt></caption>
+  <caption><samp>{{ .Host.Hostname }}</samp></caption>
   <tr>
     <td>Processor</td>
     <td>
-      {{- range $cpu := .Cpu -}}
-        {{ $cpu.ModelName }}
+      {{- $cpu := index .Cpu 0 -}}
+      {{ $cpu.ModelName }}
+      {{ if eq $cpu.Cores 1 -}}
+        <progress max="100" value="{{ .Cpu.Percent }}">{{ .Cpu.Percent | printf "%.2f %%" }}</progress>
+      {{- else -}}
+        {{- range $curCpu := .Cpu -}}
+          <progress max="100" value="{{ .Percent }}">{{ .Percent | printf "%.2f %%" }}</progress>
+        {{- end -}}
       {{- end -}}
     </td>
   </tr>
   <tr>
     <td>RAM</td>
-    <td>{{ .Mem.Used | prettyBytes }} / {{ .Mem.Total | prettyBytes }} ({{ .Mem.UsedPercent | printf "%.2f %%" }})</td>
+    <td>
+      {{ .Mem.Used | prettyMem }} / {{ .Mem.Total | prettyMem }} ({{ .Mem.UsedPercent | printf "%.2f %%" }})
+      <progress max="{{ .Mem.Total }}" value="{{ .Mem.Used }}"></progress>
+    </td>
   </tr>
   <tr>
     <td>Disk</td>
-    <td>{{ .Disk.Used | prettyBytes }} / {{ .Disk.Total | prettyBytes }} ({{ .Disk.UsedPercent | printf "%.2f %%" }})</td>
+    <td>
+      {{ .Disk.Used | prettyDisk }} / {{ .Disk.Total | prettyDisk }} ({{ .Disk.UsedPercent | printf "%.2f %%" }})
+      <progress max="{{ .Disk.Total }}" value="{{ .Disk.Used }}"></progress>
+    </td>
   </tr>
 </table>
